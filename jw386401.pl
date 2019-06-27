@@ -1,5 +1,5 @@
 /**
- * Funkcja sprawdzajaca czy dana etykieta wierzcholka wystapila juz wczesniej
+ * Predykat sprawdzajacy czy dana etykieta wierzcholka wystapila juz wczesniej
  */
 brakPowtorzenEtykiet([], _) :- true.
 brakPowtorzenEtykiet([node(Etykieta, _, _)|TWierz], ListaWierz) :-
@@ -7,14 +7,14 @@ brakPowtorzenEtykiet([node(Etykieta, _, _)|TWierz], ListaWierz) :-
     brakPowtorzenEtykiet(TWierz, [Etykieta|ListaWierz]).
 
 /**
- * Funkcja zwracajaca zbior wierzcholkow (V) obecnego grafu
+ * Predykat zwracajacy zbior wierzcholkow (V) obecnego grafu
  */
 wierzcholki([], []) :- true.
 wierzcholki([node(Etykieta, _, _)|TWierz], [Etykieta|V]) :-
     wierzcholki(TWierz, V).
 
 /**
- * Funkcja zwracajaca pelny zbior krawedzi skierowanych (E) obecnego grafu
+ * Predykat zwracajacy pelny zbior krawedzi skierowanych (E) obecnego grafu
  */
 krawedzieE([], []) :- true.
 krawedzieE([node(_, [], _)|TWierz], E) :-
@@ -23,7 +23,7 @@ krawedzieE([node(Etykieta, [HE|TE], _)|TWierz], [edgeE(Etykieta, HE)|E]) :-
     krawedzieE([node(Etykieta, TE, _)|TWierz], E).
 
 /**
- * Funkcja zwracajaca pelny zbior krawedzi nieskierowanych (F) obecnego grafu
+ * Predykat zwracajacy pelny zbior krawedzi nieskierowanych (F) obecnego grafu
  */
 krawedzieF([], []) :- true.
 krawedzieF([node(_, _, [])|TWierz], F) :-
@@ -32,7 +32,7 @@ krawedzieF([node(Etykieta, _, [HF|TF])|TWierz], [edgeF(Etykieta, HF)|F]) :-
     krawedzieF([node(Etykieta, _, TF)|TWierz], F).
 
 /**
- * Funkcja sprawdzajaca czy dana lista krawedzi zawiera etykiety tylko ze zbioru V
+ * Predykat sprawdzajacy czy dana lista krawedzi zawiera etykiety tylko ze zbioru V
  */
 poprawneEtykiety([], _) :- true.
 poprawneEtykiety([Etykieta|Krawedzie], V) :-
@@ -40,7 +40,7 @@ poprawneEtykiety([Etykieta|Krawedzie], V) :-
     poprawneEtykiety(Krawedzie, V).
 
 /**
- * Funkcja sprawdzająca czy dla danej krawedzi nieskierowanej ta krawedz pojawila sie na listach
+ * Predykat sprawdzajacy czy dla danej krawedzi nieskierowanej ta krawedz pojawila sie na listach
  * sasiedztwa obu wierzcholkow
  */
 istniejeOdbitaKrawedz(_, [], _) :- true.
@@ -49,7 +49,7 @@ istniejeOdbitaKrawedz(Etykieta, [HF|TF], F) :-
     istniejeOdbitaKrawedz(Etykieta, TF, F).
 
 /**
- * Funkcja sprawdzająca poprawność krawedzi danego termu
+ * Predykat sprawdzajacy poprawność krawedzi danego termu
  */
 poprawneListySasiedztwa([], _, _) :- true.
 poprawneListySasiedztwa([node(Etykieta, VELista, VFLista)|TWierz], V, F) :-
@@ -59,7 +59,7 @@ poprawneListySasiedztwa([node(Etykieta, VELista, VFLista)|TWierz], V, F) :-
     poprawneListySasiedztwa(TWierz, V, F).
 
 /**
- * Funkcja sprawdzajaca czy podany term jest EFGrafem, a dokladniej sprawdza czy:
+ * Predykat sprawdzajacy czy podany term jest EFGrafem, a dokladniej sprawdza czy:
  * - Podany term jest lista
  * - Podany term ma format zgodny ze specyfikacja zadania
  * - W podanej liscie wystepuja powtorzenia etykiet dla zbioru V
@@ -76,15 +76,15 @@ jestEFGrafem(Term) :-
     poprawneListySasiedztwa(Term, V, F).
 
 /**
- * Funkcja sprawdzajaca czy podany EFGraf jest EFGrafem i czy jest dobrze ulozony
+ * Predykat sprawdzajacy czy podany EFGraf jest EFGrafem i czy jest dobrze ulozony
  */
 jestDobrzeUlozony(EFGraf) :-
-    %TODOjestEFGrafem(EFGraf),
+    jestEFGrafem(EFGraf),
     jestDobrzeUlozonyNieMusiBycEFGrafem(EFGraf).
 
 
 /**
- * Funkcja sprawdzajaca pierwszy warunek dobrze ulozonego grafu, czyli:
+ * Predykat sprawdzajacy pierwszy warunek dobrze ulozonego grafu, czyli:
  *      Istnieje dokladnie jedna para roznych wierzcholkow, vs,ve, takich ze nie ma
  *      E-krawedzi postaci (v, vs) oraz E-krawedzi postaci (ve, v′)
  */
@@ -104,50 +104,41 @@ wierzcholkiVsVe(V, E, Vs, Ve) :-
     \+ nth0(0, T, _).
 
 /**
- * Funkcja sprawdzajaca czy dana lista wierzcholkow tworzy sciezke polaczona E krawedziami
+ * Predykat sprawdzajacy czy sciezka zakonczona w Ve jest poprawna sciezka
+ * zgodna z drugim warunkiem, oraz okreslajaca poprawne polaczenia miedzy wierzcholkami
+ * (Probujemy dopasowac nastepne wierzcholki i sprawdzamy czy utworza szukana sciezke)
  */
-sciezkaPolaczonaEKrawedziami([], _) :-
-    write("Pusta lista"),
-    true.
-sciezkaPolaczonaEKrawedziami([H|[]], _) :-
-    write("Jednoelementowa lista"),
-    true.
-sciezkaPolaczonaEKrawedziami([H1,H2|T], E) :-
-    write("Przynajmniej dwuelementowa lista"),
-    member(edgeE(H1, H2), E),
-    sciezkaPolaczonaEKrawedziami([H2|T], E).
+znajdzNastepnyWSciezce(V, _, _, Ve, [Ve|ObecnaSciezkaT]) :-
+    sort([Ve|ObecnaSciezkaT], ObecnaSciezkaZbiorV),
+    length(V, LiczbaWierzcholkow),
+    length(ObecnaSciezkaZbiorV, LiczbaWierzcholkowNaSciezce),
+    LiczbaWierzcholkow == LiczbaWierzcholkowNaSciezce.
+znajdzNastepnyWSciezce(V, E, Vs, Ve, [ObecnyWierz|ObecnaSciezkaT]) :-
+    length([ObecnyWierz|ObecnaSciezkaT], DlugoscSciezki),
+    length(V, LiczbaWierzcholkow),
+    length(E, LiczbaKrawedzi),
+    DlugoscSciezki =< LiczbaWierzcholkow * LiczbaKrawedzi,
+
+    findall(
+        (NastepnyWSciezce),
+        (
+            member(edgeE(ObecnyWierz, NastepnyWSciezce), E),
+            znajdzNastepnyWSciezce(V, E, Vs, Ve, [NastepnyWSciezce|[ObecnyWierz|ObecnaSciezkaT]])
+        ),
+        PoprawneSciezki
+    ),
+    nth0(0, PoprawneSciezki, _).
 
 /**
- * Funkcja sprawdzajaca drugi warunek dobrze ulozonego grafu, czyli:
+ * Predykat sprawdzajacy drugi warunek dobrze ulozonego grafu, czyli:
  *      Istnieje sciezka v1,...,vn, taka ze V = {v1,...,vn}, v1 = vs, vn = ve oraz
  *      (vi, vi+1) ∈ E dla i = 1, . . . , n − 1.
  */
 istniejeESciezkaVsVe(V, E, Vs, Ve) :-
-    length(V, LiczbaWierzcholkow),
-    length(E, LiczbaKrawedzi),
-    findall(
-        (PotencjalneSciezki),
-        (
-            %kazdy element V nalezy do sciezki
-            forall(member(Wierz, V), member(Wierz, PotencjalneSciezki)),
-            
-            %dlugosc sciezki jest ograniczona przez (liczba wierzcholkow * liczba krawedzi)
-            length(PotencjalneSciezki, DlugoscSciezki),
-            DlugoscSciezki =< LiczbaWierzcholkow * LiczbaKrawedzi,
-
-            %pierwszy element to Vs, ostatni to Ve
-            nth0(0, PotencjalneSciezki, Vs),
-            nth1(DlugoscSciezki, PotencjalneSciezki, Ve),
-            
-            %wierzcholki na sciezce sa polaczane E krawedzia
-            sciezkaPolaczonaEKrawedziami(PotencjalneSciezki, E)
-        ),
-        ListaSzukanychSciezek
-    ),
-    nth0(0, ListaSzukanychSciezek, _).
+    znajdzNastepnyWSciezce(V, E, Vs, Ve, [Vs]).
 
 /**
- * Funkcja sprawdzajaca trzeci warunek dobrze ulozonego grafu, czyli:
+ * Predykat sprawdzajacy trzeci warunek dobrze ulozonego grafu, czyli:
  *      Dla kazedego wierzcholka v ∈ V istnieja co najwyzej trzy F-krawedzie zawierajace v
  */
 limitFKrawedzi(V, F) :-
@@ -165,7 +156,7 @@ limitFKrawedzi(V, F) :-
     ).
 
 /**
- * Funkcja sprawdzajaca czy podany EFGraf jest dobrze ulozony
+ * Predykat sprawdzajacy czy podany EFGraf jest dobrze ulozony
  */
 jestDobrzeUlozonyNieMusiBycEFGrafem(EFGraf) :-
     wierzcholki(EFGraf, V),
@@ -178,7 +169,7 @@ jestDobrzeUlozonyNieMusiBycEFGrafem(EFGraf) :-
     limitFKrawedzi(V, F).
 
 /**
- * Funkcja sprawdzajaca czy podany EFGraf jest dobrze ulozony
+ * Predykat sprawdzajacy czy podany EFGraf jest dobrze ulozony
  * (ale nie musi byc EFGrafem) i czy jest dobrze permutujacy
  */
 jestDobrzePermutujacy(EFGraf) :-
