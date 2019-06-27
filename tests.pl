@@ -88,6 +88,8 @@
 :- \+ jestDobrzeUlozony([node(v984, [v998,v1012], []), node(v998, [v1026], []), node(v1012, [v1026], []), node(v1026, [], [])]).
 :- \+ jestDobrzeUlozony([node(v984, [v998,v1026], [v998,v1026]), node(v998, [v1012,v1026,v984], [v984]), node(v1012, [v1026], []), node(v1026, [], [v984])]).
 :- \+ jestDobrzeUlozony([node(v984, [v998,v1026], [v998,v1026,v1012]), node(v998, [v1012,v1026,v1012,v1012], [v984]), node(v1012, [v1026,v998], []), node(v1026, [], [v984])]).
+%Wlasne
+:- \+ jestDobrzeUlozony([node(v1926, [], [v1942]), node(v1940, [v1926, v1926],[v1942]), node(v1941, [v1941], [v1942]), node(v1942, [v1942], [v1926, v1940, v1941, v1942])]).
 
 %OK
 :- jestDobrzePermutujacy([node(v1926, [], []), node(v1940, [v1926, v1926],[])]).
