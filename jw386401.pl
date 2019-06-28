@@ -169,8 +169,84 @@ jestDobrzeUlozonyNieMusiBycEFGrafem(EFGraf) :-
     limitFKrawedzi(V, F).
 
 /**
+ * Predykat sprawdzajacy czy istnieje F-krawedz, dla termu ktory
+ * nie musi byc EFGrafem, czyli nie musi miec odbitych wszystkich krawedzi
+ * w opisie grafu
+ */
+istniejeFKrawedz(X, Y, F) :-
+    member(edgeF(X, Y), F);
+    member(edgeF(Y, X), F).
+
+/**
+ * Predykat sprawdzajacy pierwszy warunek dobrze permutujacego grafu, czyli:
+ * Dla kazdego wierzcholka v, jesli istnieja v1, w1, takie ze (v, v1) ∈ E
+ * oraz w1 /= ve i {v,w1} ∈ F, to istnieje tez wierzcholek u,
+ * taki ze (w1,u) ∈ E oraz {v1,u} ∈ F
+ */
+permutujacyPierwszyWarunek(V, E, F, Ve) :-
+    forall(
+        (
+            member(Wierz, V),
+            member(edgeE(Wierz, X), E),
+            istniejeFKrawedz(Wierz, Y, F),
+            member(X, V),
+            member(Y, V),
+            Y \== Ve
+        ),
+        (
+            member(U, V),
+            member(edgeE(Y, U), E),
+            istniejeFKrawedz(X, U, F)
+        )
+    ).
+
+/**
+ * Predykat sprawdzajacy drugi warunek dobrze permutujacego grafu, czyli: 
+ * Dla kazdego wierzcholka v, jesli istnieja v1, w1, takie ze (v1, v) ∈ E
+ * oraz w1 ̸= vs i {v,w1} ∈ F, to istnieje tez wierzcholek u,
+ * taki ze (u,w1) ∈ E oraz {v1,u} ∈ F.
+ */
+permutujacyDrugiWarunek(V, E, F, Vs) :-
+    forall(
+        (
+            member(Wierz, V),
+            member(edgeE(X, Wierz), E),
+            istniejeFKrawedz(Wierz, Y, F),
+            member(X, V),
+            member(Y, V),
+            Y \== Vs
+        ),
+        (
+            member(U, V),
+            member(edgeE(U, Y), E),
+            istniejeFKrawedz(X, U, F)
+        )
+    ).
+
+/**
  * Predykat sprawdzajacy czy podany EFGraf jest dobrze ulozony
  * (ale nie musi byc EFGrafem) i czy jest dobrze permutujacy
  */
 jestDobrzePermutujacy(EFGraf) :-
-    jestDobrzeUlozonyNieMusiBycEFGrafem(EFGraf).
+    jestDobrzeUlozonyNieMusiBycEFGrafem(EFGraf),
+    wierzcholki(EFGraf, V),
+    krawedzieE(EFGraf, DupE),
+    krawedzieF(EFGraf, DupF),
+    sort(DupE, E),
+    sort(DupF, F),
+    wierzcholkiVsVe(V, E, Vs, Ve),
+    permutujacyPierwszyWarunek(V, E, F, Ve),
+    permutujacyDrugiWarunek(V, E, F, Vs).
+
+
+
+
+
+
+
+
+
+
+
+
+

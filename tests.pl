@@ -90,7 +90,7 @@
 :- \+ jestDobrzeUlozony([node(v984, [v998,v1026], [v998,v1026,v1012]), node(v998, [v1012,v1026,v1012,v1012], [v984]), node(v1012, [v1026,v998], []), node(v1026, [], [v984])]).
 %Wlasne
 :- \+ jestDobrzeUlozony([node(v1926, [], [v1942]), node(v1940, [v1926, v1926],[v1942]), node(v1941, [v1941], [v1942]), node(v1942, [v1942], [v1926, v1940, v1941, v1942])]).
-/**
+
 %OK
 :- jestDobrzePermutujacy([node(v1926, [], []), node(v1940, [v1926, v1926],[])]).
 :- jestDobrzePermutujacy([node(v988, [v1002], []), node(v1002, [v1016], []), node(v1016, [v1002,v1030], []), node(v1030, [v1044], []), node(v1044, [], [])]).
@@ -105,7 +105,7 @@
 :- \+ jestDobrzePermutujacy([node(v984, [v998,v1026], [v998,v1026,v1012]), node(v998, [v1012,v1026,v1012,v1012], [v984]), node(v1012, [v1026,v998], [v984]), node(v1026, [], [v984])]).
 :- \+ jestDobrzePermutujacy([node(v984, [v998,v1026], [v998,v1026,v1012]), node(v998, [v1012,v1026,v1012,v1012], [v984]), node(v1012, [v1026,v998], [v984]), node(v1026, [], [v984])]).
 
-
+/**
 %OK
 :- jestSucc([node(v1926, [], []), node(v1940, [v1926, v1926],[])],[],[]).
 :- jestSucc([node(v1926, [], []), node(v1940, [v1926, v1926],[])],[],[v1940]).
