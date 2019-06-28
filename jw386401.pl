@@ -1,7 +1,8 @@
+% Autor: Jakub Wróblewski
 /**
  * Predykat sprawdzajacy czy dana etykieta wierzcholka wystapila juz wczesniej
  */
-brakPowtorzenEtykiet([], _) :- true.
+brakPowtorzenEtykiet([], _).
 brakPowtorzenEtykiet([node(Etykieta, _, _)|TWierz], ListaWierz) :-
     \+ member(Etykieta, ListaWierz),
     brakPowtorzenEtykiet(TWierz, [Etykieta|ListaWierz]).
@@ -9,14 +10,14 @@ brakPowtorzenEtykiet([node(Etykieta, _, _)|TWierz], ListaWierz) :-
 /**
  * Predykat zwracajacy zbior wierzcholkow (V) obecnego grafu
  */
-wierzcholki([], []) :- true.
+wierzcholki([], []).
 wierzcholki([node(Etykieta, _, _)|TWierz], [Etykieta|V]) :-
     wierzcholki(TWierz, V).
 
 /**
  * Predykat zwracajacy pelny zbior krawedzi skierowanych (E) obecnego grafu
  */
-krawedzieE([], []) :- true.
+krawedzieE([], []).
 krawedzieE([node(_, [], _)|TWierz], E) :-
     krawedzieE(TWierz, E).
 krawedzieE([node(Etykieta, [HE|TE], _)|TWierz], [edgeE(Etykieta, HE)|E]) :-
@@ -25,7 +26,7 @@ krawedzieE([node(Etykieta, [HE|TE], _)|TWierz], [edgeE(Etykieta, HE)|E]) :-
 /**
  * Predykat zwracajacy pelny zbior krawedzi nieskierowanych (F) obecnego grafu
  */
-krawedzieF([], []) :- true.
+krawedzieF([], []).
 krawedzieF([node(_, _, [])|TWierz], F) :-
     krawedzieF(TWierz, F).
 krawedzieF([node(Etykieta, _, [HF|TF])|TWierz], [edgeF(Etykieta, HF)|F]) :-
@@ -34,7 +35,7 @@ krawedzieF([node(Etykieta, _, [HF|TF])|TWierz], [edgeF(Etykieta, HF)|F]) :-
 /**
  * Predykat sprawdzajacy czy dana lista krawedzi zawiera etykiety tylko ze zbioru V
  */
-poprawneEtykiety([], _) :- true.
+poprawneEtykiety([], _).
 poprawneEtykiety([Etykieta|Krawedzie], V) :-
     member(Etykieta, V),
     poprawneEtykiety(Krawedzie, V).
@@ -43,7 +44,7 @@ poprawneEtykiety([Etykieta|Krawedzie], V) :-
  * Predykat sprawdzajacy czy dla danej krawedzi nieskierowanej ta krawedz pojawila sie na listach
  * sasiedztwa obu wierzcholkow
  */
-istniejeOdbitaKrawedz(_, [], _) :- true.
+istniejeOdbitaKrawedz(_, [], _).
 istniejeOdbitaKrawedz(Etykieta, [HF|TF], F) :- 
     member(edgeF(HF, Etykieta), F),
     istniejeOdbitaKrawedz(Etykieta, TF, F).
@@ -51,7 +52,7 @@ istniejeOdbitaKrawedz(Etykieta, [HF|TF], F) :-
 /**
  * Predykat sprawdzajacy poprawność krawedzi danego termu
  */
-poprawneListySasiedztwa([], _, _) :- true.
+poprawneListySasiedztwa([], _, _).
 poprawneListySasiedztwa([node(Etykieta, VELista, VFLista)|TWierz], V, F) :-
     poprawneEtykiety(VELista, V),
     poprawneEtykiety(VFLista, V),
@@ -66,7 +67,7 @@ poprawneListySasiedztwa([node(Etykieta, VELista, VFLista)|TWierz], V, F) :-
  * - Etykieta podana na liscie sasiedztwa wystepuje w zbiorze V
  * - Krawedzie nieskierowane (ze zbioru F) wystepuja na liscie sasiedztwa dla obu wierzcholkow
  */
-jestEFGrafem([]) :- true.
+jestEFGrafem([]).
 jestEFGrafem(Term) :-
     is_list(Term),
     brakPowtorzenEtykiet(Term, []),
@@ -179,9 +180,9 @@ istniejeFKrawedz(X, Y, F) :-
 
 /**
  * Predykat sprawdzajacy pierwszy warunek dobrze permutujacego grafu, czyli:
- * Dla kazdego wierzcholka v, jesli istnieja v1, w1, takie ze (v, v1) ∈ E
- * oraz w1 /= ve i {v,w1} ∈ F, to istnieje tez wierzcholek u,
- * taki ze (w1,u) ∈ E oraz {v1,u} ∈ F
+ *      Dla kazdego wierzcholka v, jesli istnieja v1, w1, takie ze (v, v1) ∈ E
+ *      oraz w1 /= ve i {v,w1} ∈ F, to istnieje tez wierzcholek u,
+ *      taki ze (w1,u) ∈ E oraz {v1,u} ∈ F
  */
 permutujacyPierwszyWarunek(V, E, F, Ve) :-
     forall(
@@ -202,9 +203,9 @@ permutujacyPierwszyWarunek(V, E, F, Ve) :-
 
 /**
  * Predykat sprawdzajacy drugi warunek dobrze permutujacego grafu, czyli: 
- * Dla kazdego wierzcholka v, jesli istnieja v1, w1, takie ze (v1, v) ∈ E
- * oraz w1 ̸= vs i {v,w1} ∈ F, to istnieje tez wierzcholek u,
- * taki ze (u,w1) ∈ E oraz {v1,u} ∈ F.
+ *      Dla kazdego wierzcholka v, jesli istnieja v1, w1, takie ze (v1, v) ∈ E
+ *      oraz w1 ̸= vs i {v,w1} ∈ F, to istnieje tez wierzcholek u,
+ *      taki ze (u,w1) ∈ E oraz {v1,u} ∈ F.
  */
 permutujacyDrugiWarunek(V, E, F, Vs) :-
     forall(
@@ -238,15 +239,43 @@ jestDobrzePermutujacy(EFGraf) :-
     permutujacyPierwszyWarunek(V, E, F, Ve),
     permutujacyDrugiWarunek(V, E, F, Vs).
 
+/**
+ * Predykat sprawdzajacy czy Lista2 jest nastepnikiem Lista1, o ktorych wiemy,
+ * ze sa poprawnymi F-sciezkami, a ich dlugosci spelniaja warunek nastepnika
+ */
+sciezkaJestNastepnikiem([], _, _).
+sciezkaJestNastepnikiem([WierzW|ResztaLista1], [WierzV|ResztaLista2], E) :-
+    member(edgeE(WierzW, WierzV), E),
+    sciezkaJestNastepnikiem(ResztaLista1, ResztaLista2, E).
 
+/**
+ * Predykat sprawdzajacy czy podana sciezka jest poprawna F-sciezka, czyli:
+ * - Wierzcholki na sciezce naleza do zbioru wierzcholkow
+ * - Kolejne wierzcholki na sciezce sa polaczone F-krawedzia
+ */
+poprawnaFSciezka([], _, _).
+poprawnaFSciezka([ObecnyWierz|[]], V, _) :-
+    member(ObecnyWierz, V).
+poprawnaFSciezka([ObecnyWierz, NastepnyWierz|ResztaSciezki], V, F) :-
+    member(ObecnyWierz, V),
+    istniejeFKrawedz(ObecnyWierz, NastepnyWierz, F),
+    poprawnaFSciezka([NastepnyWierz|ResztaSciezki], V, F).
 
-
-
-
-
-
-
-
-
-
-
+/**
+ * Predykat sprawdzajacy czy F-sciezka podana w Lista2 jest nastepnikiem
+ * F-sciezki podanej w Lista1 w danym EFGrafie. Dodatkowo sprawdzana jest
+ * poprawnosc F-sciezek w Lista1, oraz Lista2
+ */
+jestSucc(EFGraf, Lista1, Lista2) :-
+    jestDobrzePermutujacy(EFGraf),
+    wierzcholki(EFGraf, V),
+    krawedzieE(EFGraf, DupE),
+    krawedzieF(EFGraf, DupF),
+    sort(DupE, E),
+    sort(DupF, F),
+    length(Lista1, M),
+    length(Lista2, N),
+    M =< N,
+    poprawnaFSciezka(Lista1, V, F),
+    poprawnaFSciezka(Lista2, V, F),
+    sciezkaJestNastepnikiem(Lista1, Lista2, E).
