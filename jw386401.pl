@@ -1,4 +1,13 @@
-% Autor: Jakub Wróblewski
+/**
+ * Autor: Jakub Wróblewski
+ * W moim rozwiazaniu zostaly zrobione predykaty:
+ * - jestEFGrafem
+ * - jestDobrzeUlozony
+ * - jestDobrzePermutujacy
+ * - jestSucc (dzialajaca dla ustalonych list)
+ * Brakuje natomiast implementacji jestSucc dla nieustalonych list
+ */
+
 /**
  * Predykat sprawdzajacy czy dana etykieta wierzcholka wystapila juz wczesniej
  */
